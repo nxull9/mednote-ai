@@ -41,38 +41,11 @@ client = OpenAI(api_key=api_key) if api_key else None
 # =========================
 st.markdown("""
 <style>
-    /* Compact layout - everything on one screen */
-    .block-container {
-        padding-top: 1rem !important;
-        padding-bottom: 1rem !important;
-    }
-    
     .stApp {
         background: #0a0a0a;
         background-image: 
             radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
             radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%);
-    }
-    
-    /* Reduce spacing in columns */
-    [data-testid="column"] {
-        padding: 0 0.5rem;
-    }
-    
-    /* Compact metrics */
-    [data-testid="stMetricValue"] { 
-        color: white; 
-        font-size: 20px;
-    }
-    [data-testid="stMetricLabel"] { 
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 12px;
-    }
-    
-    /* Compact alerts */
-    .stAlert {
-        padding: 0.5rem 1rem;
-        margin: 0.3rem 0;
     }
     
     .stButton>button {
@@ -158,10 +131,10 @@ st.markdown("""
         background: rgba(20, 20, 30, 0.95);
         backdrop-filter: blur(10px);
         border-top: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 4px 8px;
+        padding: 8px;
         text-align: center;
-        color: rgba(255, 255, 255, 0.5);
-        font-size: 10px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 11px;
         z-index: 999;
     }
     
@@ -380,8 +353,9 @@ with col_new:
         st.session_state.report = None
         st.rerun()
 
-st.markdown("<h1 style='text-align: center; margin: 0; padding: 10px 0 5px 0;'>🩺 MedNote AI</h1>", unsafe_allow_html=True)
-st.markdown("<p style='text-align: center; color: rgba(255,255,255,0.6); margin: 0 0 15px 0; font-size: 14px;'>Smart Medical Documentation System</p>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; margin-top: -10px; margin-bottom: 5px;'>🩺 MedNote AI</h1>", unsafe_allow_html=True)
+st.markdown("<p style='text-align: center; color: rgba(255,255,255,0.6); margin-bottom: 40px;'>Smart Medical Documentation System</p>", unsafe_allow_html=True)
 
 
 # =========================
@@ -391,11 +365,11 @@ left_col, center_col, right_col = st.columns([1, 2, 1.5])
 
 # LEFT: Patient Profile
 with left_col:
-    st.markdown("<h3 style='margin: 0 0 10px 0;'>👤 Patient Profile</h3>", unsafe_allow_html=True)
+    st.markdown("<h3>👤 Patient Profile</h3>", unsafe_allow_html=True)
     
     if st.session_state.report:
         rep = st.session_state.report
-        st.markdown(f"<h4 style='margin: 0 0 8px 0;'>{safe_str(rep.get('patient_name', 'Patient'))}</h4>", unsafe_allow_html=True)
+        st.markdown(f"<h4>{safe_str(rep.get('patient_name', 'Patient'))}</h4>", unsafe_allow_html=True)
         
         demo = rep.get('demographics', {})
         if demo.get('age'): st.markdown(f"**Age:** {demo['age']}")
@@ -406,99 +380,83 @@ with left_col:
         allergies = rep.get('allergies', {})
         if allergies and allergies.get('drug_allergies'):
             st.markdown("**🚫 Allergies:**")
-            for allergy in allergies['drug_allergies'][:2]:  # Max 2
+            for allergy in allergies['drug_allergies']:
                 st.error(f"• {allergy}", icon="⚠️")
         
         current_meds = rep.get('current_medications', [])
         if current_meds:
             st.markdown("**💊 Current Medications:**")
-            for med in current_meds[:2]:  # Max 2
+            for med in current_meds[:3]:
                 st.info(f"• {med.get('name', '—')}")
         
         vitals = rep.get('vital_signs', {})
         if vitals and any(vitals.values()):
             st.markdown("**📊 Vital Signs:**")
-            col1, col2 = st.columns(2)
-            with col1:
-                if vitals.get('blood_pressure'): st.metric("BP", vitals['blood_pressure'], label_visibility="visible")
-            with col2:
-                if vitals.get('heart_rate'): st.metric("HR", vitals['heart_rate'], label_visibility="visible")
+            if vitals.get('blood_pressure'): st.metric("BP", vitals['blood_pressure'])
+            if vitals.get('heart_rate'): st.metric("HR", vitals['heart_rate'])
+            if vitals.get('temperature'): st.metric("Temp", vitals['temperature'])
     else:
-        st.info("Patient info will appear after generating report", icon="ℹ️")
+        st.info("Patient information will appear here after generating report")
 
 # CENTER: Audio Recording/Upload
 with center_col:
-    st.markdown("<h3 style='text-align: center; margin: 0 0 10px 0;'>🎙 Record Consultation</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='text-align: center;'>🎙 Record Consultation</h3>", unsafe_allow_html=True)
     
-    # Simple 3-step guide - compact
-    st.markdown("""
-    <div style='background: rgba(59, 130, 246, 0.2); border-radius: 10px; padding: 10px; margin-bottom: 10px;'>
-        <p style='margin: 0; font-size: 13px; color: rgba(255,255,255,0.9);'>
-            <b>Quick Steps:</b> 1️⃣ Click mic → 2️⃣ Speak → 3️⃣ Transcribe
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.info("💡 **Works on ANY device!** 1️⃣ Click mic → 2️⃣ Speak → 3️⃣ Transcribe")
     
-    # Big red recording section - compact
-    st.markdown("<div style='background: rgba(239, 68, 68, 0.1); border: 2px solid #ef4444; border-radius: 10px; padding: 12px; margin-bottom: 10px;'>", unsafe_allow_html=True)
-    
-    # Audio input (browser recording)
-    audio_input = st.audio_input("🎤 Click to start recording", key="audio_recorder")
+    # Audio input (browser recording) - WORKS ON ALL DEVICES!
+    audio_input = st.audio_input("Click to record consultation", key="audio_recorder")
     
     if audio_input:
-        st.success("✅ Recording captured!", icon="✅")
         st.audio(audio_input)
         
         if st.button("📝 Transcribe Audio", type="primary", use_container_width=True):
-            with st.spinner("🔄 Converting speech to text..."):
+            with st.spinner("Transcribing audio..."):
                 transcript = transcribe_audio(audio_input)
                 if st.session_state.full_transcript:
                     st.session_state.full_transcript += "\n\n" + transcript
                 else:
                     st.session_state.full_transcript = transcript
-            st.success("✅ Transcription complete!")
+            st.success("Transcription complete!")
             st.rerun()
     
-    st.markdown("</div>", unsafe_allow_html=True)
+    # OR file upload
+    st.markdown("---")
+    st.markdown("**Or upload an audio file:**")
+    uploaded_file = st.file_uploader(
+        "Upload audio (WAV, MP3, M4A)",
+        type=['wav', 'mp3', 'm4a', 'ogg'],
+        label_visibility="collapsed"
+    )
     
-    # OR file upload - compact
-    with st.expander("📁 Or Upload Audio File"):
-        uploaded_file = st.file_uploader(
-            "Upload audio file",
-            type=['wav', 'mp3', 'm4a', 'ogg'],
-            label_visibility="collapsed",
-            help="Drag and drop or click to browse"
-        )
+    if uploaded_file:
+        st.audio(uploaded_file)
         
-        if uploaded_file:
-            st.success("✅ File uploaded!")
-            st.audio(uploaded_file)
-            
-            if st.button("📝 Transcribe Uploaded File", use_container_width=True, type="primary"):
-                with st.spinner("🔄 Converting speech to text..."):
-                    transcript = transcribe_audio(uploaded_file)
-                    if st.session_state.full_transcript:
-                        st.session_state.full_transcript += "\n\n" + transcript
-                    else:
-                        st.session_state.full_transcript = transcript
-                st.success("✅ Transcription complete!")
-                st.rerun()
+        if st.button("📝 Transcribe Uploaded File", use_container_width=True):
+            with st.spinner("Transcribing audio..."):
+                transcript = transcribe_audio(uploaded_file)
+                if st.session_state.full_transcript:
+                    st.session_state.full_transcript += "\n\n" + transcript
+                else:
+                    st.session_state.full_transcript = transcript
+            st.success("Transcription complete!")
+            st.rerun()
     
-    # Show transcript - compact
-    st.markdown("<p style='margin: 10px 0 5px 0; font-weight: 600;'>📝 Transcribed Text:</p>", unsafe_allow_html=True)
+    # Show transcript
+    st.markdown("**📝 Full Transcript:**")
     st.text_area(
         "Transcript",
         value=st.session_state.full_transcript,
-        height=180,
+        height=300,
         label_visibility="collapsed",
-        placeholder="Your transcribed consultation will appear here...",
+        placeholder="Audio will be transcribed here...",
     )
 
 # RIGHT: Results
 with right_col:
-    st.markdown("<h3 style='margin: 0 0 10px 0;'>📊 Results</h3>", unsafe_allow_html=True)
+    st.markdown("<h3>📊 Results</h3>", unsafe_allow_html=True)
     
-    st.markdown("**🌐 Report Language:**")
+    st.markdown("**🌐 Select Report Language:**")
     st.session_state.report_language = st.selectbox(
         "Language",
         ["English", "Arabic"],
@@ -514,87 +472,104 @@ with right_col:
                 )
             st.rerun()
     
+    st.markdown("<br>", unsafe_allow_html=True)
+    
     if st.session_state.report:
         rep = st.session_state.report
         
-        # Compact overview
+        # Overview
         overview = rep.get('conversation_overview', {})
         if overview:
-            st.markdown("### 💬 Overview")
+            st.markdown("### 💬 Conversation Overview")
             
             if overview.get('what_patient_said'):
-                st.info(f"**Patient:** {overview['what_patient_said'][:100]}...", icon="👤")
+                st.info(f"**Patient's Complaint:** {overview['what_patient_said']}")
             
             if overview.get('what_doctor_observed'):
-                st.info(f"**Doctor:** {overview['what_doctor_observed'][:100]}...", icon="👨‍⚕️")
+                st.info(f"**Doctor's Observation:** {overview['what_doctor_observed']}")
+            
+            st.markdown("---")
         
         # Diagnosis
         assessment = rep.get('clinical_assessment', {})
         if assessment and assessment.get('suspected_diagnosis'):
-            st.success(f"**🎯 Diagnosis:** {assessment['suspected_diagnosis']}", icon="🎯")
+            st.success(f"**🎯 Diagnosis:** {assessment['suspected_diagnosis']}")
         
         # Tabs
         tab1, tab2, tab3, tab4 = st.tabs([
-            "📋 Doctor",
-            "🧑‍⚕️ Patient", 
-            "💊 Meds",
-            "⚠️ Safety"
+            "📋 Doctor Report",
+            "🧑‍⚕️ Patient Summary", 
+            "💊 Medications",
+            "⚠️ Safety & Advisory"
         ])
         
         with tab1:
             st.markdown("**Chief Complaint:**")
-            st.write(safe_str(rep.get('chief_complaint'))[:200] + "...")
+            st.write(safe_str(rep.get('chief_complaint')))
             
-            st.markdown("**History:**")
-            st.write(safe_str(rep.get('history_of_present_illness'))[:200] + "...")
+            st.markdown("**History of Present Illness:**")
+            st.write(safe_str(rep.get('history_of_present_illness')))
+            
+            st.markdown("**Physical Examination:**")
+            st.write(safe_str(rep.get('physical_examination')))
             
             if assessment.get('reasoning'):
-                st.markdown("**Reasoning:**")
-                st.info(assessment['reasoning'][:150] + "...")
+                st.markdown("**Clinical Reasoning:**")
+                st.info(assessment['reasoning'])
         
         with tab2:
             patient_report = rep.get('patient_report')
             if patient_report:
-                st.write(patient_report[:300] + "...")
+                st.write(patient_report)
             else:
-                st.info("Patient summary will appear here")
+                st.info("Patient-friendly summary will appear here")
         
         with tab3:
             meds = rep.get('medication_plan', [])
             if meds:
-                for i, med in enumerate(meds[:3], 1):  # Max 3
+                for i, med in enumerate(meds, 1):
                     stock = med.get('stock_status', {})
                     in_stock = stock.get('in_stock', True)
                     
                     st.markdown(f"**{i}. {safe_str(med.get('name'))}**")
                     
                     if in_stock:
-                        st.success("✅ In Stock", icon="✅")
+                        st.success("✅ In Stock")
                     else:
-                        st.error("❌ Out", icon="❌")
-                        st.info(f"Alt: {safe_str(stock.get('alternative'))[:50]}")
+                        st.error("❌ Out of Stock")
+                        st.info(f"**Alternative:** {safe_str(stock.get('alternative'))}")
                     
-                    st.caption(f"{safe_str(med.get('dose'))} - {safe_str(med.get('frequency'))}")
+                    st.write(f"**Dose:** {safe_str(med.get('dose'))}")
+                    st.write(f"**Frequency:** {safe_str(med.get('frequency'))}")
+                    st.write(f"**Duration:** {safe_str(med.get('duration'))}")
+                    st.write(f"**Instructions:** {safe_str(med.get('instructions'))}")
+                    
+                    if med.get('guideline_basis'):
+                        st.caption(f"📚 {med['guideline_basis']}")
+                    st.markdown("---")
             else:
                 st.info("No medications prescribed")
         
         with tab4:
             safety = rep.get('safety_checks', [])
             if safety:
-                for check in safety[:3]:  # Max 3
-                    st.warning(check[:100], icon="⚠️")
+                st.markdown("**⚠️ Safety Checks:**")
+                for check in safety:
+                    st.warning(check)
             
             missing = rep.get('doctor_advisory_missing_questions', [])
             if missing:
-                st.markdown("**❓ Questions:**")
-                for i, q in enumerate(missing[:3], 1):  # Max 3
-                    st.write(f"{i}. {q[:80]}...")
-
+                st.markdown("**❓ Suggested Questions:**")
+                for i, q in enumerate(missing, 1):
+                    st.write(f"{i}. {q}")
         
         # Export
         st.markdown("---")
+        st.markdown("<br>", unsafe_allow_html=True)
         st.markdown(f"**👨‍⚕️ Doctor:** {st.session_state.doctor_name}")
-        st.caption("(Auto-filled from account)")
+        st.caption("(Automatically filled from your account)")
+        
+        st.markdown("<br>", unsafe_allow_html=True)
         
         if st.button("📄 Download PDF Report", use_container_width=True, type="primary"):
             pdf_buffer = generate_professional_pdf(rep, st.session_state.doctor_name)
@@ -606,11 +581,13 @@ with right_col:
                 use_container_width=True
             )
     else:
-        st.info("Results will appear after generating report", icon="ℹ️")
+        st.info("Results will appear here after generating report")
 
-# Disclaimer - compact
+# Disclaimer
 st.markdown("""
 <div class='disclaimer'>
-    ⚠️ For testing purposes only • Not a substitute for professional medical judgment
+    ⚠️ This system is built for testing and research purposes only. 
+    MedNote AI is not intended to replace professional medical consultations or clinical judgment. 
+    Always consult qualified healthcare professionals for medical decisions.
 </div>
 """, unsafe_allow_html=True)
