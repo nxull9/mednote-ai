@@ -12,7 +12,7 @@
 
 *Transform doctor patient conversations into medical reports in seconds*
 
-[🚀 Live Demo](https://mednote-ai-duphat.streamlit.app) • [📖 Documentation](#documentation) • [🐛 Report Bug](https://github.com/nxull9/mednote-ai/issues) • [✨ Request Feature](https://github.com/nxull9/mednote-ai/issues)
+[🚀 Live Demo](https://mednote-ai-26.streamlit.app/) • [📖 Documentation](#documentation) • [🐛 Report Bug](https://github.com/nxull9/mednote-ai/issues) • [✨ Request Feature](https://github.com/nxull9/mednote-ai/issues)
 
 </div>
 
@@ -343,7 +343,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - GitHub: [@nxull9](https://github.com/nxull9)
 - Project Link: [https://github.com/nxull9/mednote-ai](https://github.com/nxull9/mednote-ai)
-- Live Demo: [https://mednote-ai-duphat.streamlit.app](https://mednote-ai-duphat.streamlit.app)
+- Live Demo: [https://mednote-ai-duphat.streamlit.app](https://mednote-ai-26.streamlit.app/)
 
 ---
 
