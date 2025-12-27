@@ -281,7 +281,6 @@ This project is licensed under the MIT License - see LICENSE file for details.
 
 For issues, questions, or suggestions:
 - Open an issue on GitHub
-- Contact: your.email@example.com
 
 ---
 
