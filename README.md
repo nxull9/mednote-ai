@@ -264,8 +264,8 @@ This project is licensed under the MIT License - see LICENSE file for details.
 
 ## 👥 Authors
 
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
+**Nayef Aljhani**
+- GitHub: [nxull9](https://github.com/nxull9)
 
 ---
 
